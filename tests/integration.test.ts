@@ -1,12 +1,7 @@
 // tests/integration.test.ts
-import { jest, describe, it, expect, beforeEach } from '@jest/globals'; // Import Jest globals, revert afterEach to beforeEach
-// Keep type import, remove function imports
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import type { CreatePaymentSuccessResponse } from '../src/tools/createPayment';
-// import { createMobileYeepayPayment } from '../src/tools/createPayment'; // Removed static function import
-// import { queryYeepayPaymentStatus } from '../src/tools/queryPayment'; // Removed static function import
-// Import the actual interface if exported, otherwise define a minimal one for mocking
-// Assuming YeepayQueryResult might not be directly exported or easily importable without causing issues,
-// let's define a minimal structure for the mock based on its usage in queryPayment.ts
+// Define a minimal structure for the mock based on its usage in queryPayment.ts
 interface MockYeepayQueryResult {
     code: string;
     message: string;
@@ -25,10 +20,10 @@ jest.mock('../src/config', () => ({
   config: {
     parentMerchantNo: 'mockParentMerchantNo123',
     merchantNo: 'mockMerchantNo456',
-    secretKey: 'mockSecretKey789', // Provide a mock private key string
+    secretKey: 'mockSecretKey789',
     appKey: 'mockAppKey101',
-    notifyUrl: 'http://mock.test/notify', // Provide a mock notification URL
-    yopPublicKey: '-----BEGIN PUBLIC KEY-----\nMOCK_YOP_PUBLIC_KEY_CONTENT\n-----END PUBLIC KEY-----' // Provide a mock public key string
+    notifyUrl: 'http://mock.test/notify',
+    yopPublicKey: '-----BEGIN PUBLIC KEY-----\nMOCK_YOP_PUBLIC_KEY_CONTENT\n-----END PUBLIC KEY-----'
   }
 }));
 
@@ -36,12 +31,12 @@ jest.mock('../src/config', () => ({
 type CreateMobileYeepayPaymentType = typeof import('../src/tools/createPayment').createMobileYeepayPayment;
 type QueryYeepayPaymentStatusType = typeof import('../src/tools/queryPayment').queryYeepayPaymentStatus;
 
-describe('Yeepay Payment Integration Flow', () => { // describe is now imported
+describe('Yeepay Payment Integration Flow', () => {
   // Declare variables in describe scope to hold the actual mock functions
   let mockedCreatePayment: jest.MockedFunction<CreateMobileYeepayPaymentType>;
   let mockedQueryPayment: jest.MockedFunction<QueryYeepayPaymentStatusType>;
 
-  beforeEach(async () => { // Make beforeEach async
+  beforeEach(async () => {
     // Dynamically import the modules - jest.mock should ensure these resolve to the mocks
     const createPaymentMockModule = await import('../src/tools/createPayment');
     const queryPaymentMockModule = await import('../src/tools/queryPayment');
@@ -54,9 +49,8 @@ describe('Yeepay Payment Integration Flow', () => { // describe is now imported
     mockedCreatePayment.mockClear();
     mockedQueryPayment.mockClear();
   });
-  // Remove afterEach
 
-  it('should create a payment and then query its status successfully', async () => { // it is now imported
+  it('should create a payment and then query its status successfully', async () => {
     // --- Arrange ---
     const testOrderId = `TEST_${Date.now()}`;
     const testUniqueOrderNo = `YOP_${testOrderId}`;
@@ -78,11 +72,8 @@ describe('Yeepay Payment Integration Flow', () => { // describe is now imported
         message: '查询成功',
         orderId: testOrderId,
         uniqueOrderNo: testUniqueOrderNo,
-        status: 'SUCCESS', // Simulate a successful payment status
+        status: 'SUCCESS',
     };
-    // Since queryYeepayPaymentStatus is typed to return the actual YeepayQueryResult,
-    // we need to cast our mock response appropriately if the structures differ significantly.
-    // However, for this mock setup, assuming MockYeepayQueryResult is compatible enough.
     mockedQueryPayment.mockResolvedValue(mockQueryResponse as any); // Use 'as any' if types strictly mismatch
 
     // --- Act ---
@@ -106,43 +97,40 @@ describe('Yeepay Payment Integration Flow', () => { // describe is now imported
     const queryResponse = await mockedQueryPayment(queryInput);
 
     // --- Assert ---
-    // Verify create payment mock was called correctly
-    expect(mockedCreatePayment).toHaveBeenCalledTimes(1); // expect is now imported
-    expect(mockedCreatePayment).toHaveBeenCalledWith(createInput); // expect is now imported
-    expect(createResponse).toEqual(mockCreateResponse); // expect is now imported
-    expect(uniqueOrderNoFromCreate).toBe(testUniqueOrderNo); // expect is now imported
+    // Verify create payment mock
+    expect(mockedCreatePayment).toHaveBeenCalledTimes(1);
+    expect(mockedCreatePayment).toHaveBeenCalledWith(createInput);
+    expect(createResponse).toEqual(mockCreateResponse);
+    expect(uniqueOrderNoFromCreate).toBe(testUniqueOrderNo);
 
-    // Verify query payment mock was called correctly
-    expect(mockedQueryPayment).toHaveBeenCalledTimes(1); // expect is now imported
-    expect(mockedQueryPayment).toHaveBeenCalledWith(queryInput); // expect is now imported
-    expect(queryResponse).toEqual(mockQueryResponse); // expect is now imported
-    expect(queryResponse.status).toBe('SUCCESS'); // expect is now imported
-    expect(queryResponse.uniqueOrderNo).toBe(testUniqueOrderNo); // expect is now imported
+    // Verify query payment mock
+    expect(mockedQueryPayment).toHaveBeenCalledTimes(1);
+    expect(mockedQueryPayment).toHaveBeenCalledWith(queryInput);
+    expect(queryResponse).toEqual(mockQueryResponse);
+    expect(queryResponse.status).toBe('SUCCESS');
+    expect(queryResponse.uniqueOrderNo).toBe(testUniqueOrderNo);
   });
 
-  // Example of a test case for creation failure
-  it('should handle error during payment creation', async () => { // it is now imported
+  // Test case for creation failure
+  it('should handle error during payment creation', async () => {
     // --- Arrange ---
     const testOrderId = `FAIL_CREATE_${Date.now()}`;
     const creationError = new Error('Yeepay API Failure: AUTH_ERROR - Invalid credentials');
     // Configure mock for this test
     mockedCreatePayment.mockRejectedValue(creationError);
-    // No need to configure query mock if it's not expected to be called
 
     // --- Act & Assert ---
-    // Call the mocked function via the variable assigned in beforeEach
-    await expect(mockedCreatePayment({ // expect is now imported
+    await expect(mockedCreatePayment({
       orderId: testOrderId,
       amount: 0.02,
       goodsName: 'Fail Product',
     })).rejects.toThrow(creationError);
 
-    // Ensure query mock was not called
-    expect(mockedQueryPayment).not.toHaveBeenCalled(); // expect is now imported
+    expect(mockedQueryPayment).not.toHaveBeenCalled();
   });
 
-    // Example of a test case for query failure
-  it('should handle error during payment status query', async () => { // it is now imported
+    // Test case for query failure
+  it('should handle error during payment status query', async () => {
     // --- Arrange ---
     const testOrderId = `FAIL_QUERY_${Date.now()}`;
     const testUniqueOrderNo = `YOP_${testOrderId}`;
@@ -169,15 +157,12 @@ describe('Yeepay Payment Integration Flow', () => { // describe is now imported
 
     // 2. Call query payment status (expected to fail)
     // --- Assert ---
-    // Call the mocked function via the variable assigned in beforeEach
-    await expect(mockedQueryPayment({ // expect is now imported
+    await expect(mockedQueryPayment({
         orderId: createResponse.orderId,
     })).rejects.toThrow(queryError);
 
-    // Verify create mock was called
-    expect(mockedCreatePayment).toHaveBeenCalledTimes(1); // expect is now imported
-     // Verify query mock was called
-    expect(mockedQueryPayment).toHaveBeenCalledTimes(1); // expect is now imported
-    expect(mockedQueryPayment).toHaveBeenCalledWith({ orderId: testOrderId }); // expect is now imported
+    expect(mockedCreatePayment).toHaveBeenCalledTimes(1);
+    expect(mockedQueryPayment).toHaveBeenCalledTimes(1);
+    expect(mockedQueryPayment).toHaveBeenCalledWith({ orderId: testOrderId });
   });
 });

@@ -14,17 +14,14 @@ const notifyUrl = process.env.YOP_NOTIFY_URL; // createPayment 需要
 
 if (!parentMerchantNo || !merchantNo || !secretKey || !appKey) {
   const errorMsg = 'Missing required Yeepay configuration in environment variables (YOP_PARENT_MERCHANT_NO, YOP_MERCHANT_NO, YOP_SECRET_KEY, YOP_APP_KEY)';
-  // log.error(errorMsg); // 移除日志调用
   throw new Error(errorMsg); // 直接抛出错误
 }
 // notifyUrl 只在 createPayment 中是必需的，但在这里检查可以更早发现问题
 if (!notifyUrl) {
     const errorMsg = 'Missing required Yeepay configuration in environment variables (YOP_NOTIFY_URL)';
-    // log.error(errorMsg); // 移除日志调用
     throw new Error(errorMsg); // 直接抛出错误
 }
 
-// Define an interface for the config structure
 interface AppConfig {
   readonly parentMerchantNo: string;
   readonly merchantNo: string;

@@ -1,5 +1,5 @@
 {
-  "name": "yeepay-mcp",
+  "name": "@yeepay/yeepay-mcp",
   "version": "0.1.0",
   "description": "易宝支付(Yeepay) MCP Server 集成",
   "main": "dist/index.js",
