@@ -1,5 +1,5 @@
-import { config as appConfig } from '../config.js'; // 导入配置模块并重命名
-import { YopClient, YopConfig } from 'yop-typescript-sdk'; // 从 SDK 导入
+import { config as appConfig } from '../config'; // 导入配置模块并重命名 (Removed .js extension)
+import { YopClient, YopConfig } from '@yeepay/yop-typescript-sdk'; // 从 SDK 导入
 
 // 定义查询成功时 result 的预期结构 (可以根据实际需要调整)
 interface YeepayQueryResult {
@@ -36,14 +36,12 @@ interface QueryRequest {
 export async function queryYeepayPaymentStatus(input: QueryRequest): Promise<YeepayQueryResult> { // 返回更具体的类型
   try {
     // 从 appConfig 获取配置值
-    const { parentMerchantNo, merchantNo, appKey, secretKey, yopPublicKey } = appConfig;
+    const { parentMerchantNo, merchantNo, appKey, secretKey } = appConfig;
 
     // 创建 YopConfig 对象
     const yopConfig: YopConfig = {
         appKey,
         secretKey,
-        yopPublicKey,
-        // serverRoot: 'https://openapi.yeepay.com/yop-center' // SDK 应该有默认值
     };
 
     // 实例化 YopClient

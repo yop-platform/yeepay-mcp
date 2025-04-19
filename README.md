@@ -39,11 +39,11 @@ pnpm install
 Copy `.env.example` to `.env` and configure the following environment variables:
 
 ```dotenv
-YEEPAY_PARENT_MERCHANT_NO=Your parent merchant number
-YEEPAY_MERCHANT_NO=Your merchant number
-YEEPAY_SECRET_KEY=Your private key
-YEEPAY_APP_KEY=Your application AppKey
-YEEPAY_NOTIFY_URL=https://your-domain.com/yeepay/notify
+YOP_PARENT_MERCHANT_NO=Your parent merchant number
+YOP_MERCHANT_NO=Your merchant number
+YOP_SECRET_KEY=Your private key
+YOP_APP_KEY=Your application AppKey
+YOP_NOTIFY_URL=https://your-domain.com/yeepay/notify
 ```
 
 ## Usage
@@ -165,11 +165,11 @@ Configure this service in Cline's MCP settings file (`cline_mcp_settings.json`).
     "/path/to/yeepay-mcp/dist/index.js" // Replace with the actual absolute path
   ],
   "env": { // Alternatively, place the configuration in the .env file and ensure the service can read it
-    "YEEPAY_PARENT_MERCHANT_NO": "Your parent merchant number",
-    "YEEPAY_MERCHANT_NO": "Your merchant number",
-    "YEEPAY_SECRET_KEY": "Your private key",
-    "YEEPAY_APP_KEY": "Your application AppKey",
-    "YEEPAY_NOTIFY_URL": "https://your-domain.com/yeepay/notify"
+    "YOP_PARENT_MERCHANT_NO": "Your parent merchant number",
+    "YOP_MERCHANT_NO": "Your merchant number",
+    "YOP_SECRET_KEY": "Your private key",
+    "YOP_APP_KEY": "Your application AppKey",
+    "YOP_NOTIFY_URL": "https://your-domain.com/yeepay/notify"
   },
   "disabled": false,
   "alwaysAllow": []
@@ -185,11 +185,11 @@ Configure this service in Cline's MCP settings file (`cline_mcp_settings.json`).
     "/absolute/path/to/yeepay-mcp" // Replace with the actual absolute path
   ],
   "env": { // Same as above, env or .env file
-    "YEEPAY_PARENT_MERCHANT_NO": "Your parent merchant number",
-    "YEEPAY_MERCHANT_NO": "Your merchant number",
-    "YEEPAY_SECRET_KEY": "Your private key",
-    "YEEPAY_APP_KEY": "Your application AppKey",
-    "YEEPAY_NOTIFY_URL": "https://your-domain.com/yeepay/notify"
+    "YOP_PARENT_MERCHANT_NO": "Your parent merchant number",
+    "YOP_MERCHANT_NO": "Your merchant number",
+    "YOP_SECRET_KEY": "Your private key",
+    "YOP_APP_KEY": "Your application AppKey",
+    "YOP_NOTIFY_URL": "https://your-domain.com/yeepay/notify"
   },
   "disabled": false,
   "alwaysAllow": []
@@ -207,11 +207,11 @@ Configure this service in Cline's MCP settings file (`cline_mcp_settings.json`).
     // You can also add arguments, e.g., "--port", "3001"
   ],
   "env": { // Same as above, env or .env file
-    "YEEPAY_PARENT_MERCHANT_NO": "Your parent merchant number",
-    "YEEPAY_MERCHANT_NO": "Your merchant number",
-    "YEEPAY_SECRET_KEY": "Your private key",
-    "YEEPAY_APP_KEY": "Your application AppKey",
-    "YEEPAY_NOTIFY_URL": "https://your-domain.com/yeepay/notify"
+    "YOP_PARENT_MERCHANT_NO": "Your parent merchant number",
+    "YOP_MERCHANT_NO": "Your merchant number",
+    "YOP_SECRET_KEY": "Your private key",
+    "YOP_APP_KEY": "Your application AppKey",
+    "YOP_NOTIFY_URL": "https://your-domain.com/yeepay/notify"
   },
   "disabled": false,
   "alwaysAllow": []

@@ -1,5 +1,5 @@
-import { config as appConfig } from '../config.js'; // 导入配置模块并重命名
-import { YopClient, YopConfig } from 'yop-typescript-sdk'; // 从 SDK 导入
+import { config as appConfig } from '../config'; // 导入配置模块并重命名 (Removed .js extension)
+import { YopClient, YopConfig } from '@yeepay/yop-typescript-sdk'; // 从 SDK 导入
 
 interface PaymentRequest {
   orderId: string;
@@ -47,14 +47,12 @@ export interface CreatePaymentSuccessResponse { // 添加 export
 export async function createMobileYeepayPayment(input: PaymentRequest): Promise<CreatePaymentSuccessResponse> {
   try {
     // 从 appConfig 获取配置值
-    const { parentMerchantNo, merchantNo, secretKey, appKey, yopPublicKey, notifyUrl } = appConfig;
+    const { parentMerchantNo, merchantNo, secretKey, appKey, notifyUrl } = appConfig;
 
     // 创建 YopConfig 对象
     const yopConfig: YopConfig = {
       appKey,
-      secretKey,
-      yopPublicKey,
-      // serverRoot: 'https://openapi.yeepay.com/yop-center' // SDK 应该有默认值，如果需要覆盖则取消注释
+      secretKey
     };
 
     // 实例化 YopClient

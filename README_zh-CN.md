@@ -39,11 +39,11 @@ pnpm install
 复制 `.env.example` 为 `.env` 并配置以下环境变量:
 
 ```dotenv
-YEEPAY_PARENT_MERCHANT_NO=您的父商户编号
-YEEPAY_MERCHANT_NO=您的商户编号
-YEEPAY_SECRET_KEY=您的私钥
-YEEPAY_APP_KEY=您的应用AppKey
-YEEPAY_NOTIFY_URL=https://您的域名/yeepay/notify
+YOP_PARENT_MERCHANT_NO=您的父商户编号
+YOP_MERCHANT_NO=您的商户编号
+YOP_SECRET_KEY=您的私钥
+YOP_APP_KEY=您的应用AppKey
+YOP_NOTIFY_URL=https://您的域名/yeepay/notify
 ```
 
 ## 使用方式
@@ -165,11 +165,11 @@ node /path/to/yeepay-mcp/dist/index.js
     "/path/to/yeepay-mcp/dist/index.js" // 替换为实际的绝对路径
   ],
   "env": { // 或者将配置放在 .env 文件中，并确保服务能读取到
-    "YEEPAY_PARENT_MERCHANT_NO": "您的父商户编号",
-    "YEEPAY_MERCHANT_NO": "您的商户编号",
-    "YEEPAY_SECRET_KEY": "您的私钥",
-    "YEEPAY_APP_KEY": "您的应用AppKey",
-    "YEEPAY_NOTIFY_URL": "https://您的域名/yeepay/notify"
+    "YOP_PARENT_MERCHANT_NO": "您的父商户编号",
+    "YOP_MERCHANT_NO": "您的商户编号",
+    "YOP_SECRET_KEY": "您的私钥",
+    "YOP_APP_KEY": "您的应用AppKey",
+    "YOP_NOTIFY_URL": "https://您的域名/yeepay/notify"
   },
   "disabled": false,
   "alwaysAllow": []
@@ -185,11 +185,11 @@ node /path/to/yeepay-mcp/dist/index.js
     "/absolute/path/to/yeepay-mcp" // 替换为实际的绝对路径
   ],
   "env": { // 同上，env 或 .env 文件
-    "YEEPAY_PARENT_MERCHANT_NO": "您的父商户编号",
-    "YEEPAY_MERCHANT_NO": "您的商户编号",
-    "YEEPAY_SECRET_KEY": "您的私钥",
-    "YEEPAY_APP_KEY": "您的应用AppKey",
-    "YEEPAY_NOTIFY_URL": "https://您的域名/yeepay/notify"
+    "YOP_PARENT_MERCHANT_NO": "您的父商户编号",
+    "YOP_MERCHANT_NO": "您的商户编号",
+    "YOP_SECRET_KEY": "您的私钥",
+    "YOP_APP_KEY": "您的应用AppKey",
+    "YOP_NOTIFY_URL": "https://您的域名/yeepay/notify"
   },
   "disabled": false,
   "alwaysAllow": []
@@ -207,11 +207,11 @@ node /path/to/yeepay-mcp/dist/index.js
     // 也可以添加参数，如 "--port", "3001"
   ],
   "env": { // 同上，env 或 .env 文件
-    "YEEPAY_PARENT_MERCHANT_NO": "您的父商户编号",
-    "YEEPAY_MERCHANT_NO": "您的商户编号",
-    "YEEPAY_SECRET_KEY": "您的私钥",
-    "YEEPAY_APP_KEY": "您的应用AppKey",
-    "YEEPAY_NOTIFY_URL": "https://您的域名/yeepay/notify"
+    "YOP_PARENT_MERCHANT_NO": "您的父商户编号",
+    "YOP_MERCHANT_NO": "您的商户编号",
+    "YOP_SECRET_KEY": "您的私钥",
+    "YOP_APP_KEY": "您的应用AppKey",
+    "YOP_NOTIFY_URL": "https://您的域名/yeepay/notify"
   },
   "disabled": false,
   "alwaysAllow": []
