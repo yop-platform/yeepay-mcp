@@ -1,0 +1,23 @@
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+其中：
+
+- **type**: 表示提交的类型，如feat、fix、docs等
+- **scope**: （可选）表示提交影响的范围，如core、server等
+- **subject**: 简短描述提交的内容
+- **body**: （可选）详细描述提交的内容
+- **footer**: （可选）包含重大变更或关闭issue的信息
+
+示例：
+
+```
+feat(server): add health check endpoint
+
+Add a new endpoint to check the health of the server and its components.
+
+Closes #123
