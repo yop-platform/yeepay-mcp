@@ -1,21 +1,22 @@
 export default {
-  preset: 'ts-jest/presets/default-esm', // 恢复 ts-jest ESM 预设
+  // preset: 'ts-jest/presets/default-esm', // Remove preset
   testEnvironment: 'node',
-  extensionsToTreatAsEsm: ['.ts'], // 明确 .ts 为 ESM
+  // extensionsToTreatAsEsm: ['.ts'], // Remove this - run tests in CJS mode
   moduleNameMapper: { // 保留 moduleNameMapper 以防万一
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   transform: {
-    // 使用 ts-jest 转换 .ts/.tsx 文件，启用 ESM 并使用 Babel 配置
+    // Configure ts-jest for CJS output, letting Babel handle the CJS conversion
     '^.+\\.tsx?$': [
       'ts-jest',
       {
-        useESM: true,
-        babelConfig: true, // 确保 ts-jest 使用 babel.config.cjs
+        useESM: false, // Ensure ts-jest doesn't output ESM
+        tsconfig: 'tsconfig.json', // Explicitly point to tsconfig
+        babelConfig: true, // Keep Babel config enabled for CJS conversion
       },
     ],
-    // 使用 babel-jest 转换 .js/.jsx 文件 (处理 SDK)
-    '^.+\\.jsx?$': 'babel-jest',
+    // Remove babel-jest transform for JS files
+    // '^.+\\.jsx?$': 'babel-jest',
   },
   transformIgnorePatterns: [
     // 忽略 node_modules，但 @yeepay/yop-typescript-sdk 除外 (已修正)

@@ -3,13 +3,21 @@
         "target": "ESNext",
         "module": "ESNext",
         "moduleResolution": "node",
-        "allowJs": true,
+        "allowJs": false, // Changed from true
         "outDir": "./dist",
         "rootDir": "./src",
         "strict": true,
+        "noImplicitAny": true, // Explicitly added
+        "strictNullChecks": true, // Explicitly added
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": "./", // Added for paths
+        "paths": { // Added for paths
+            "@/*": [
+                "src/*"
+            ]
+        }
     },
     "include": [
         "src/**/*"

@@ -24,14 +24,22 @@ if (!notifyUrl) {
     throw new Error(errorMsg); // 直接抛出错误
 }
 
-// 导出配置对象
+// Define an interface for the config structure
+interface AppConfig {
+  readonly parentMerchantNo: string;
+  readonly merchantNo: string;
+  readonly secretKey: string;
+  readonly appKey: string;
+  readonly notifyUrl: string;
+}
+
+// 导出配置对象, 使用 as const 使其深度只读
 export const config = {
   parentMerchantNo,
   merchantNo,
   secretKey,
   appKey,
   notifyUrl,
-};
+} as const; // Apply as const assertion
 
-// 冻结对象防止意外修改
-Object.freeze(config);
+// Object.freeze(config); // Removed runtime freeze, relying on compile-time readonly via 'as const'

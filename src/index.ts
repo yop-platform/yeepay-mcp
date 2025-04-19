@@ -24,24 +24,24 @@ const server = new McpServer({
 // 创建移动支付订单工具
 // NOTE: Based on TS errors, this SDK version/config expects only the execute function.
 // Description and Input Schema might need to be defined elsewhere (e.g., server metadata).
+// Define Zod schema for create payment input
+const CreatePaymentInputSchema = z.object({
+  orderId: z.string().describe('商户订单号'),
+  amount: z.number().describe('交易金额'),
+  goodsName: z.string().describe('商品名称'),
+  userIp: z.string().optional().describe('用户IP') // Made optional as per comment and validation logic
+  // TODO: Consider adding userId, payWay, channel etc. based on createPayment.ts needs
+});
+type CreatePaymentInput = z.infer<typeof CreatePaymentInputSchema>;
+
 server.tool('create_mobile_yeepay_payment', '创建移动支付订单工具',
-  {
-    orderId: z.string().describe('商户订单号'),
-    amount: z.number().describe('交易金额'),
-    goodsName: z.string().describe('商品名称'),
-    userIp: z.string().describe('用户IP')
-    // 注意：这里定义的 schema 应该与 createPayment.ts 中的 PaymentRequest 接口匹配
-    // 可以考虑添加 userId, payWay, channel 等可选字段
-  },
-  // 移除显式 Promise 返回类型注解
-  async (input: any) => {
-    // 输入验证（保持不变）
-    if (!input || typeof input !== 'object' || !input.orderId || typeof input.orderId !== 'string' || !input.amount || typeof input.amount !== 'number' || !input.goodsName || typeof input.goodsName !== 'string') {
-        throw new Error("Invalid input for create_mobile_yeepay_payment. Required fields: orderId (string), amount (number), goodsName (string). Optional: userIp (string).");
-    }
+  CreatePaymentInputSchema.shape, // Pass the shape, not the object
+  // Use inferred type instead of any
+  async (input: CreatePaymentInput) => {
+    // Removed manual input validation; rely on Zod schema provided to server.tool
 
     try {
-      // 调用原始函数获取结果
+      // 调用原始函数获取结果 (input is now typed)
       const paymentResult: CreatePaymentSuccessResponse = await createMobileYeepayPayment(input);
 
       // 使用 'text' as const
@@ -65,20 +65,20 @@ server.tool('create_mobile_yeepay_payment', '创建移动支付订单工具',
 
 // 查询支付状态工具 (保持不变，但如果 queryYeepayPaymentStatus 返回值也变了，则需要类似修改)
 // NOTE: Based on TS errors, this SDK version/config expects only the execute function.
+// Define Zod schema for query payment status input
+const QueryPaymentStatusInputSchema = z.object({
+  orderId: z.string().describe('商户订单号')
+});
+type QueryPaymentStatusInput = z.infer<typeof QueryPaymentStatusInputSchema>;
+
 server.tool('query_yeepay_payment_status', '查询支付状态工具',
-  {
-    orderId: z.string().describe('商户订单号')
-  },
-  async (input: any) => {
-  // TODO: Add input validation based on the intended schema:
-  // required: ['orderId']
-  // properties: orderId(string)
-   if (!input || typeof input !== 'object' || !input.orderId || typeof input.orderId !== 'string') {
-      throw new Error("Invalid input for query_yeepay_payment_status. Required field: orderId (string).");
-  }
+  QueryPaymentStatusInputSchema.shape, // Pass the shape, not the object
+  // Use inferred type instead of any
+  async (input: QueryPaymentStatusInput) => {
+    // Removed manual input validation; rely on Zod schema provided to server.tool
 
    try {
-       const queryResult = await queryYeepayPaymentStatus(input);
+       const queryResult = await queryYeepayPaymentStatus(input); // input is now typed
        // 使用 'text' as const
        return {
            content: [{ type: 'text' as const, text: JSON.stringify(queryResult, null, 2) }]

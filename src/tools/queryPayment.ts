@@ -61,7 +61,8 @@ export async function queryYeepayPaymentStatus(input: QueryRequest): Promise<Yee
     // const yopClient = YopClient.getInstance(); // 移除旧的实例化方式
 
     // 使用 YopClient 发送请求
-    const responseData = await yopClient.get(apiUrl, queryParams) as YeepayQueryResponse; // 使用 SDK 的 get 方法
+    // Add double assertion for consistency, similar to the post method usage
+    const responseData = await yopClient.get(apiUrl, queryParams as unknown as Record<string, unknown>) as YeepayQueryResponse; // 使用 SDK 的 get 方法
     console.info("[QueryPayment] Raw Response Data:", JSON.stringify(responseData, null, 2)); // 打印原始响应
 
     // --- 开始修改响应处理逻辑 ---

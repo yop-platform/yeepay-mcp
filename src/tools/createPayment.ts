@@ -44,6 +44,21 @@ export interface CreatePaymentSuccessResponse { // 添加 export
 }
 
 
+// Define the structure for the request body sent to Yeepay API
+interface YeepayRequestBody {
+  parentMerchantNo: string;
+  merchantNo: string;
+  orderId: string;
+  orderAmount: string; // Amount is converted to string for the API
+  goodsName: string;
+  payWay: string;
+  channel: string;
+  scene: string;
+  userIp: string;
+  notifyUrl: string;
+  userId?: string; // Optional field
+}
+
 export async function createMobileYeepayPayment(input: PaymentRequest): Promise<CreatePaymentSuccessResponse> {
   try {
     // 从 appConfig 获取配置值
@@ -58,7 +73,8 @@ export async function createMobileYeepayPayment(input: PaymentRequest): Promise<
     // 实例化 YopClient
     const yopClient = new YopClient(yopConfig);
 
-    const requestBody: Record<string, any> = {
+    // Use the specific interface instead of Record<string, any>
+    const requestBody: YeepayRequestBody = {
       parentMerchantNo,
       merchantNo,
       orderId: input.orderId,
@@ -82,7 +98,9 @@ export async function createMobileYeepayPayment(input: PaymentRequest): Promise<
     // 指定 YopClient.post 的泛型参数为 YeepayResponse
     // 注意：SDK 的 post 方法可能不直接支持泛型，它返回固定的 { state, result?, error? } 结构
     // 我们已经定义了 YeepayResponse 来匹配这个结构，所以类型断言或检查是合适的
-    const responseData = await yopClient.post(apiUrl, requestBody) as YeepayResponse; // 使用 SDK 的 post 方法
+    // Assert requestBody to Record<string, unknown> to satisfy the SDK's post method signature
+    // Use double assertion as suggested by the compiler for safer type casting
+    const responseData = await yopClient.post(apiUrl, requestBody as unknown as Record<string, unknown>) as YeepayResponse; // 使用 SDK 的 post 方法
     console.info("[CreatePayment] Raw Response Data:", JSON.stringify(responseData, null, 2)); // 打印原始响应
 
     // --- 开始修改响应处理逻辑 ---
