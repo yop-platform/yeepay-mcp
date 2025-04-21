@@ -1,11 +1,11 @@
 {
   "name": "@yeepay/yeepay-mcp",
-  "version": "0.1.0",
+  "version": "0.2.2",
   "description": "易宝支付(Yeepay) MCP Server 集成",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && chmod +x dist/index.js",
     "clean": "rimraf dist coverage",
     "prebuild": "npm run clean",
     "start": "node --loader ts-node/esm src/index.ts",
@@ -84,7 +84,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.1",
-    "@yeepay/yop-typescript-sdk": "^0.2.0",
+    "@yeepay/yop-typescript-sdk": "^4.0.0",
     "axios": "^1.6.0",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.0",

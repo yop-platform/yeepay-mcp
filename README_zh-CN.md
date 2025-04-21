@@ -41,7 +41,7 @@ pnpm install
 ```dotenv
 YOP_PARENT_MERCHANT_NO=您的父商户编号
 YOP_MERCHANT_NO=您的商户编号
-YOP_SECRET_KEY=您的私钥
+YOP_APP_PRIVATE_KEY=您的私钥
 YOP_APP_KEY=您的应用AppKey
 YOP_NOTIFY_URL=https://您的域名/yeepay/notify
 ```
@@ -167,7 +167,7 @@ node /path/to/yeepay-mcp/dist/index.js
   "env": { // 或者将配置放在 .env 文件中，并确保服务能读取到
     "YOP_PARENT_MERCHANT_NO": "您的父商户编号",
     "YOP_MERCHANT_NO": "您的商户编号",
-    "YOP_SECRET_KEY": "您的私钥",
+    "YOP_APP_PRIVATE_KEY": "您的私钥",
     "YOP_APP_KEY": "您的应用AppKey",
     "YOP_NOTIFY_URL": "https://您的域名/yeepay/notify"
   },
@@ -187,7 +187,7 @@ node /path/to/yeepay-mcp/dist/index.js
   "env": { // 同上，env 或 .env 文件
     "YOP_PARENT_MERCHANT_NO": "您的父商户编号",
     "YOP_MERCHANT_NO": "您的商户编号",
-    "YOP_SECRET_KEY": "您的私钥",
+    "YOP_APP_PRIVATE_KEY": "您的私钥",
     "YOP_APP_KEY": "您的应用AppKey",
     "YOP_NOTIFY_URL": "https://您的域名/yeepay/notify"
   },
@@ -209,7 +209,7 @@ node /path/to/yeepay-mcp/dist/index.js
   "env": { // 同上，env 或 .env 文件
     "YOP_PARENT_MERCHANT_NO": "您的父商户编号",
     "YOP_MERCHANT_NO": "您的商户编号",
-    "YOP_SECRET_KEY": "您的私钥",
+    "YOP_APP_PRIVATE_KEY": "您的私钥",
     "YOP_APP_KEY": "您的应用AppKey",
     "YOP_NOTIFY_URL": "https://您的域名/yeepay/notify"
   },

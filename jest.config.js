@@ -5,6 +5,7 @@ export default {
   moduleNameMapper: { // 保留 moduleNameMapper 以防万一
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+  modulePathIgnorePatterns: ['<rootDir>/dist/'], // Ignore compiled output
   transform: {
     // Configure ts-jest for CJS output, letting Babel handle the CJS conversion
     '^.+\\.tsx?$': [

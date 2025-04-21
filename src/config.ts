@@ -8,12 +8,12 @@ dotenv.config();
 // 读取并验证环境变量
 const parentMerchantNo = process.env.YOP_PARENT_MERCHANT_NO;
 const merchantNo = process.env.YOP_MERCHANT_NO;
-const secretKey = process.env.YOP_SECRET_KEY; // 商户私钥
+const secretKey = process.env.YOP_APP_PRIVATE_KEY; // 商户私钥
 const appKey = process.env.YOP_APP_KEY;
 const notifyUrl = process.env.YOP_NOTIFY_URL; // createPayment 需要
 
 if (!parentMerchantNo || !merchantNo || !secretKey || !appKey) {
-  const errorMsg = 'Missing required Yeepay configuration in environment variables (YOP_PARENT_MERCHANT_NO, YOP_MERCHANT_NO, YOP_SECRET_KEY, YOP_APP_KEY)';
+  const errorMsg = 'Missing required Yeepay configuration in environment variables (YOP_PARENT_MERCHANT_NO, YOP_MERCHANT_NO, YOP_APP_PRIVATE_KEY, YOP_APP_KEY)';
   throw new Error(errorMsg); // 直接抛出错误
 }
 // notifyUrl 只在 createPayment 中是必需的，但在这里检查可以更早发现问题

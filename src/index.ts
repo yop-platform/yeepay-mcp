@@ -10,7 +10,7 @@ dotenv.config();
 
 const server = new McpServer({
   name: 'yeepay-mcp',
-  version: "0.1.0",
+  version: "0.2.2",
   description: '易宝支付(Yeepay) MCP 服务集成'
 }, {
   capabilities: {

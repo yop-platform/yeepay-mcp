@@ -1,7 +1,55 @@
 // tests/integration.test.ts
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import type { CreatePaymentSuccessResponse } from '../src/tools/createPayment';
+import type { CreatePaymentSuccessResponse, PaymentRequest as CreatePaymentInput } from '../src/tools/createPayment'; // Import PaymentRequest as CreatePaymentInput
+import type { QueryRequest as QueryPaymentInput, YeepayQueryResult as QueryPaymentResult } from '../src/tools/queryPayment'; // Import QueryRequest as QueryPaymentInput and YeepayQueryResult as QueryPaymentResult
+
+// --- Configuration for Mock/Real API ---
+const useRealAPI = process.env.USE_REAL_API === 'true';
+console.log(`Running integration tests with ${useRealAPI ? 'REAL API' : 'MOCKED API'}`);
+
+// --- Conditional Mocking ---
+if (!useRealAPI) {
+  // Mock the implementation files only if not using the real API
+  jest.mock('../src/tools/createPayment');
+  jest.mock('../src/tools/queryPayment');
+
+  // Mock the config module only if not using the real API
+  jest.mock('../src/config', () => ({
+    config: {
+      parentMerchantNo: 'mockParentMerchantNo123',
+      merchantNo: 'mockMerchantNo456',
+      secretKey: 'mockSecretKey789',
+      appKey: 'mockAppKey101',
+      notifyUrl: 'http://mock.test/notify',
+      yopPublicKey: '-----BEGIN PUBLIC KEY-----\nMOCK_YOP_PUBLIC_KEY_CONTENT\n-----END PUBLIC KEY-----'
+    }
+  }));
+} else {
+  // Ensure dotenv is loaded if running real API tests directly (e.g., via IDE)
+  // In CI/CD, env vars should be set directly.
+  try {
+    require('dotenv').config({ path: '.env' }); // Adjust path if needed
+  } catch (e) {
+    console.warn("dotenv not found or failed to load. Ensure environment variables are set for real API tests.");
+  }
+  // Validate required env vars for real API calls
+  const requiredEnvVars = ['YEEPAY_PARENT_MERCHANT_NO', 'YEEPAY_MERCHANT_NO', 'YEEPAY_APP_KEY', 'YEEPAY_SECRET_KEY']; // Corrected prefix
+  const missingVars = requiredEnvVars.filter(v => !process.env[v]);
+  if (missingVars.length > 0) {
+    throw new Error(`Missing required environment variables for real API tests: ${missingVars.join(', ')}`);
+  }
+}
+
+// --- Type Definitions ---
+// Use the actual function types
+type CreateMobileYeepayPaymentType = typeof import('../src/tools/createPayment').createMobileYeepayPayment;
+type QueryYeepayPaymentStatusType = typeof import('../src/tools/queryPayment').queryYeepayPaymentStatus;
+
+// Define a union type for the functions, which can be either the real function or the mock
+type PaymentFunction<T extends (...args: any) => any> = T | jest.MockedFunction<T>;
+
 // Define a minimal structure for the mock based on its usage in queryPayment.ts
+// Keep this for mock response structure definition
 interface MockYeepayQueryResult {
     code: string;
     message: string;
@@ -11,145 +59,186 @@ interface MockYeepayQueryResult {
 }
 
 
-// Restore top-level module mocks
-jest.mock('../src/tools/createPayment');
-jest.mock('../src/tools/queryPayment');
+// --- Test Suite ---
+// Use describe.skip if running real API tests to avoid accidental runs/costs,
+// unless explicitly intended.
+// Use describe directly, conditional logic moved inside
+// const describeMocked = describe; // Or keep if preferred
 
-// Mock the config module first (factory mocks often work better at top level)
-jest.mock('../src/config', () => ({
-  config: {
-    parentMerchantNo: 'mockParentMerchantNo123',
-    merchantNo: 'mockMerchantNo456',
-    secretKey: 'mockSecretKey789',
-    appKey: 'mockAppKey101',
-    notifyUrl: 'http://mock.test/notify',
-    yopPublicKey: '-----BEGIN PUBLIC KEY-----\nMOCK_YOP_PUBLIC_KEY_CONTENT\n-----END PUBLIC KEY-----'
+describe('Yeepay Payment Integration Flow (Mocked)', () => {
+  // Skip this entire block if running real API tests
+  if (useRealAPI) {
+    // Optional: Add a console log to indicate skipping
+    // Removed commented debug log
+    return;
   }
-}));
-
-// Type definitions for the functions we are mocking (needed for variable types)
-type CreateMobileYeepayPaymentType = typeof import('../src/tools/createPayment').createMobileYeepayPayment;
-type QueryYeepayPaymentStatusType = typeof import('../src/tools/queryPayment').queryYeepayPaymentStatus;
-
-describe('Yeepay Payment Integration Flow', () => {
-  // Declare variables in describe scope to hold the actual mock functions
-  let mockedCreatePayment: jest.MockedFunction<CreateMobileYeepayPaymentType>;
-  let mockedQueryPayment: jest.MockedFunction<QueryYeepayPaymentStatusType>;
+  // Variables to hold either the real functions or the mocks
+  let createPayment: PaymentFunction<CreateMobileYeepayPaymentType>;
+  let queryPayment: PaymentFunction<QueryYeepayPaymentStatusType>;
 
   beforeEach(async () => {
-    // Dynamically import the modules - jest.mock should ensure these resolve to the mocks
-    const createPaymentMockModule = await import('../src/tools/createPayment');
-    const queryPaymentMockModule = await import('../src/tools/queryPayment');
+    if (!useRealAPI) {
+      // Dynamically import the MOCKED modules
+      const createPaymentMockModule = await import('../src/tools/createPayment');
+      const queryPaymentMockModule = await import('../src/tools/queryPayment');
 
-    // Assign the imported mock functions (jest.fn() from __mocks__)
-    mockedCreatePayment = createPaymentMockModule.createMobileYeepayPayment as jest.MockedFunction<CreateMobileYeepayPaymentType>;
-    mockedQueryPayment = queryPaymentMockModule.queryYeepayPaymentStatus as jest.MockedFunction<QueryYeepayPaymentStatusType>;
+      // Assign the imported mock functions
+      createPayment = createPaymentMockModule.createMobileYeepayPayment as jest.MockedFunction<CreateMobileYeepayPaymentType>;
+      queryPayment = queryPaymentMockModule.queryYeepayPaymentStatus as jest.MockedFunction<QueryYeepayPaymentStatusType>;
 
-    // Reset mocks before each test
-    mockedCreatePayment.mockClear();
-    mockedQueryPayment.mockClear();
+      // Reset mocks before each test
+      (createPayment as jest.MockedFunction<any>).mockClear();
+      (queryPayment as jest.MockedFunction<any>).mockClear();
+    } else {
+       // Dynamically import the REAL modules
+       // We need to bypass the cache potentially set by jest.mock if it ran in a previous non-skipped describe block
+       jest.unmock('../src/tools/createPayment');
+       jest.unmock('../src/tools/queryPayment');
+       jest.unmock('../src/config'); // Ensure config is unmocked too
+       const createPaymentRealModule = await import('../src/tools/createPayment');
+       const queryPaymentRealModule = await import('../src/tools/queryPayment');
+       await import('../src/config'); // Import config to ensure it's loaded
+
+       createPayment = createPaymentRealModule.createMobileYeepayPayment;
+       queryPayment = queryPaymentRealModule.queryYeepayPaymentStatus;
+    }
   });
 
   it('should create a payment and then query its status successfully', async () => {
     // --- Arrange ---
-    const testOrderId = `TEST_${Date.now()}`;
-    const testUniqueOrderNo = `YOP_${testOrderId}`;
-    const testPrePayTn = `TN_${testOrderId}`;
+    const testOrderId = `MOCK_TEST_${Date.now()}`;
     const testAmount = 0.01;
-    const testGoodsName = 'Test Product';
-
-    // Configure mocks using the top-level variables
-    const mockCreateResponse: CreatePaymentSuccessResponse = {
-      prePayTn: testPrePayTn,
-      orderId: testOrderId,
-      uniqueOrderNo: testUniqueOrderNo,
-    };
-    mockedCreatePayment.mockResolvedValue(mockCreateResponse);
-
-    // Configure the mock for queryYeepayPaymentStatus
-    const mockQueryResponse: MockYeepayQueryResult = { // Use the minimal mock interface
-        code: 'OPR00000',
-        message: '查询成功',
-        orderId: testOrderId,
-        uniqueOrderNo: testUniqueOrderNo,
-        status: 'SUCCESS',
-    };
-    mockedQueryPayment.mockResolvedValue(mockQueryResponse as any); // Use 'as any' if types strictly mismatch
-
-    // --- Act ---
-    // 1. Call create payment
-    const createInput = {
+    const testGoodsName = 'Mock Test Product';
+    const createInput: CreatePaymentInput = {
       orderId: testOrderId,
       amount: testAmount,
       goodsName: testGoodsName,
     };
-    // Call the mocked function via the variable assigned in beforeEach
-    const createResponse = await mockedCreatePayment(createInput);
 
-    // 2. Extract uniqueOrderNo (simulated)
+    let expectedUniqueOrderNo: string | undefined;
+    let expectedPrePayTn: string | undefined;
+
+    if (!useRealAPI) {
+      const mockUniqueOrderNo = `MOCK_YOP_${testOrderId}`;
+      const mockPrePayTn = `MOCK_TN_${testOrderId}`;
+      expectedUniqueOrderNo = mockUniqueOrderNo;
+      expectedPrePayTn = mockPrePayTn;
+
+      const mockCreateResponse: CreatePaymentSuccessResponse = {
+        prePayTn: mockPrePayTn,
+        orderId: testOrderId,
+        uniqueOrderNo: mockUniqueOrderNo,
+      };
+      (createPayment as jest.MockedFunction<any>).mockResolvedValue(mockCreateResponse);
+
+      const mockQueryResponse: MockYeepayQueryResult = {
+          code: 'OPR00000',
+          message: '查询成功',
+          orderId: testOrderId,
+          uniqueOrderNo: mockUniqueOrderNo,
+          status: 'SUCCESS',
+      };
+      (queryPayment as jest.MockedFunction<any>).mockResolvedValue(mockQueryResponse as any);
+    }
+
+    // --- Act ---
+    // 1. Call create payment
+    const createResponse = await createPayment(createInput);
+
+    // 2. Extract uniqueOrderNo
     const uniqueOrderNoFromCreate = createResponse.uniqueOrderNo;
+    const orderIdFromCreate = createResponse.orderId;
 
-    // 3. Call query payment status using the orderId from create response
-    const queryInput = {
-      orderId: createResponse.orderId,
+    // 3. Call query payment status
+    const queryInput: QueryPaymentInput = {
+      orderId: orderIdFromCreate,
     };
-     // Call the mocked function via the variable assigned in beforeEach
-    const queryResponse = await mockedQueryPayment(queryInput);
+    // Add a delay for real API to allow processing
+    if (useRealAPI) await new Promise(resolve => setTimeout(resolve, 3000)); // 3-second delay
+
+    const queryResponse = await queryPayment(queryInput);
 
     // --- Assert ---
-    // Verify create payment mock
-    expect(mockedCreatePayment).toHaveBeenCalledTimes(1);
-    expect(mockedCreatePayment).toHaveBeenCalledWith(createInput);
-    expect(createResponse).toEqual(mockCreateResponse);
-    expect(uniqueOrderNoFromCreate).toBe(testUniqueOrderNo);
+    // Common assertions for both mock and real
+    expect(createResponse).toBeDefined();
+    expect(createResponse.orderId).toBe(testOrderId);
+    expect(createResponse.uniqueOrderNo).toBeDefined();
+    expect(createResponse.uniqueOrderNo).not.toBe('');
+    expect(uniqueOrderNoFromCreate).toBe(createResponse.uniqueOrderNo); // Check consistency
 
-    // Verify query payment mock
-    expect(mockedQueryPayment).toHaveBeenCalledTimes(1);
-    expect(mockedQueryPayment).toHaveBeenCalledWith(queryInput);
-    expect(queryResponse).toEqual(mockQueryResponse);
-    expect(queryResponse.status).toBe('SUCCESS');
-    expect(queryResponse.uniqueOrderNo).toBe(testUniqueOrderNo);
+    expect(queryResponse).toBeDefined();
+    expect(queryResponse.orderId).toBe(testOrderId);
+    expect(queryResponse.uniqueOrderNo).toBe(createResponse.uniqueOrderNo); // Should match the one from creation
+
+    if (!useRealAPI) {
+      // Mock-specific assertions
+      expect(createPayment).toHaveBeenCalledTimes(1);
+      expect(createPayment).toHaveBeenCalledWith(createInput);
+      expect(createResponse.prePayTn).toBe(expectedPrePayTn);
+      expect(createResponse.uniqueOrderNo).toBe(expectedUniqueOrderNo);
+
+      expect(queryPayment).toHaveBeenCalledTimes(1);
+      expect(queryPayment).toHaveBeenCalledWith(queryInput);
+      expect(queryResponse.status).toBe('SUCCESS'); // Mock returns SUCCESS
+      expect(queryResponse.code).toBe('OPR00000');
+    } else {
+      // Real API assertions (more flexible)
+      expect(createResponse.prePayTn).toBeDefined(); // Real API should return this
+      expect(createResponse.prePayTn).not.toBe('');
+
+      // Real API status might be PROCESSING initially, or SUCCESS if checked later
+      expect(['PROCESSING', 'SUCCESS', 'PAY_SUCCESS']).toContain(queryResponse.status);
+      expect(queryResponse.code).toBe('OPR00000'); // Success code for query itself
+      // Add more real API specific checks if needed, e.g., amount
+      // expect(queryResponse.orderAmount).toBe(testAmount.toString()); // API might return string amount
+    }
   });
 
-  // Test case for creation failure
-  it('should handle error during payment creation', async () => {
+  // Test case for creation failure (Mock only, real API failure is harder to reliably trigger)
+  it('should handle error during payment creation (Mocked)', async () => {
+    if (useRealAPI) {
+      console.warn("Skipping mock-specific creation failure test in REAL API mode.");
+      return; // Skip this test if using real API
+    }
     // --- Arrange ---
-    const testOrderId = `FAIL_CREATE_${Date.now()}`;
+    const testOrderId = `MOCK_FAIL_CREATE_${Date.now()}`;
     const creationError = new Error('Yeepay API Failure: AUTH_ERROR - Invalid credentials');
-    // Configure mock for this test
-    mockedCreatePayment.mockRejectedValue(creationError);
+    (createPayment as jest.MockedFunction<any>).mockRejectedValue(creationError);
 
     // --- Act & Assert ---
-    await expect(mockedCreatePayment({
+    await expect(createPayment({
       orderId: testOrderId,
       amount: 0.02,
       goodsName: 'Fail Product',
     })).rejects.toThrow(creationError);
 
-    expect(mockedQueryPayment).not.toHaveBeenCalled();
+    expect(queryPayment).not.toHaveBeenCalled();
   });
 
-    // Test case for query failure
-  it('should handle error during payment status query', async () => {
+    // Test case for query failure (Mock only)
+  it('should handle error during payment status query (Mocked)', async () => {
+     if (useRealAPI) {
+      console.warn("Skipping mock-specific query failure test in REAL API mode.");
+      return; // Skip this test if using real API
+    }
     // --- Arrange ---
-    const testOrderId = `FAIL_QUERY_${Date.now()}`;
-    const testUniqueOrderNo = `YOP_${testOrderId}`;
-    const testPrePayTn = `TN_${testOrderId}`;
+    const testOrderId = `MOCK_FAIL_QUERY_${Date.now()}`;
+    const testUniqueOrderNo = `MOCK_YOP_${testOrderId}`;
+    const testPrePayTn = `MOCK_TN_${testOrderId}`;
 
     const mockCreateResponse: CreatePaymentSuccessResponse = {
       prePayTn: testPrePayTn,
       orderId: testOrderId,
       uniqueOrderNo: testUniqueOrderNo,
     };
-    // Configure mocks for this test
-    mockedCreatePayment.mockResolvedValue(mockCreateResponse);
+    (createPayment as jest.MockedFunction<any>).mockResolvedValue(mockCreateResponse);
+
     const queryError = new Error('Yeepay Business Error: BIZ_ORDER_NOT_EXIST - Order not found');
-    mockedQueryPayment.mockRejectedValue(queryError);
+    (queryPayment as jest.MockedFunction<any>).mockRejectedValue(queryError);
 
      // --- Act ---
     // 1. Call create payment (expected to succeed)
-    // Call the mocked function via the variable assigned in beforeEach
-    const createResponse = await mockedCreatePayment({
+    const createResponse = await createPayment({
       orderId: testOrderId,
       amount: 0.03,
       goodsName: 'Query Fail Product',
@@ -157,12 +246,122 @@ describe('Yeepay Payment Integration Flow', () => {
 
     // 2. Call query payment status (expected to fail)
     // --- Assert ---
-    await expect(mockedQueryPayment({
+    await expect(queryPayment({
         orderId: createResponse.orderId,
     })).rejects.toThrow(queryError);
 
-    expect(mockedCreatePayment).toHaveBeenCalledTimes(1);
-    expect(mockedQueryPayment).toHaveBeenCalledTimes(1);
-    expect(mockedQueryPayment).toHaveBeenCalledWith({ orderId: testOrderId });
+    expect(createPayment).toHaveBeenCalledTimes(1);
+    expect(queryPayment).toHaveBeenCalledTimes(1);
+    expect(queryPayment).toHaveBeenCalledWith({ orderId: testOrderId });
+  });
+
+  // --- Add a separate describe block for REAL API tests ---
+  // This allows running them explicitly if needed, e.g., `jest -t "Real API"`
+  describe('Yeepay Payment Integration Flow (Real API)', () => {
+    // Skip this entire block if not using real API
+    beforeAll(() => {
+      // Skip logic removed from beforeAll. Rely on checks within 'it' blocks.
+      // Keep environment variable validation for real API runs.
+      if (useRealAPI) {
+         // Validate required env vars again just in case
+        const requiredEnvVars = ['YEEPAY_PARENT_MERCHANT_NO', 'YEEPAY_MERCHANT_NO', 'YEEPAY_APP_KEY', 'YEEPAY_SECRET_KEY']; // Corrected prefix
+        const missingVars = requiredEnvVars.filter(v => !process.env[v]);
+        if (missingVars.length > 0) {
+          throw new Error(`Missing required environment variables for real API tests: ${missingVars.join(', ')}`);
+        }
+      }
+    });
+
+     // Variables to hold the real functions
+    let createPaymentReal: CreateMobileYeepayPaymentType;
+    let queryPaymentReal: QueryYeepayPaymentStatusType;
+
+    beforeEach(async () => {
+        if (!useRealAPI) return; // Don't setup if not running real tests
+
+        // Dynamically import the REAL modules, ensuring they are not mocked
+        jest.unmock('../src/tools/createPayment');
+        jest.unmock('../src/tools/queryPayment');
+        jest.unmock('../src/config');
+        const createPaymentRealModule = await import('../src/tools/createPayment');
+        const queryPaymentRealModule = await import('../src/tools/queryPayment');
+        await import('../src/config'); // Ensure real config is loaded
+
+        createPaymentReal = createPaymentRealModule.createMobileYeepayPayment;
+        queryPaymentReal = queryPaymentRealModule.queryYeepayPaymentStatus;
+    });
+
+    // Define conditional 'it' based on the environment variable
+    const itReal = useRealAPI ? it : it.skip; // Restore conditional execution
+    // Use the conditional 'itReal'
+    itReal('should create a real payment and query its status', async () => {
+        // The internal if block is no longer needed as itReal handles skipping
+
+        // --- Arrange ---
+        const testOrderId = `REAL_${Date.now()}`; // Use a distinct prefix
+        const testAmount = 0.01; // Use the minimum allowed amount
+        const testGoodsName = 'Real API Test Product';
+        const createInput: CreatePaymentInput = {
+            orderId: testOrderId,
+            amount: testAmount,
+            goodsName: testGoodsName,
+            // Add userIp if required by your real implementation/config
+            // userIp: '127.0.0.1'
+        };
+
+        console.log(`Attempting to create real payment with orderId: ${testOrderId}`);
+
+        // --- Act ---
+        let createResponse: CreatePaymentSuccessResponse;
+        try {
+            createResponse = await createPaymentReal(createInput);
+            console.log(`Real payment creation successful:`, createResponse);
+        } catch (error) {
+            console.error("Real payment creation failed:", error);
+            throw error; // Fail the test if creation fails
+        }
+
+
+        // Add a significant delay for the real API to process the order
+        console.log("Waiting 5 seconds before querying status...");
+        await new Promise(resolve => setTimeout(resolve, 5000)); // 5-second delay
+
+        const queryInput: QueryPaymentInput = {
+            orderId: createResponse.orderId,
+        };
+
+        let queryResponse: QueryPaymentResult;
+        try {
+            queryResponse = await queryPaymentReal(queryInput);
+             console.log(`Real payment query successful:`, queryResponse);
+        } catch (error) {
+            console.error("Real payment query failed:", error);
+            throw error; // Fail the test if query fails
+        }
+
+
+        // --- Assert ---
+        expect(createResponse).toBeDefined();
+        expect(createResponse.orderId).toBe(testOrderId);
+        expect(createResponse.uniqueOrderNo).toBeDefined();
+        expect(createResponse.uniqueOrderNo).not.toBe('');
+        expect(createResponse.prePayTn).toBeDefined(); // Real API should return this
+        expect(createResponse.prePayTn).not.toBe('');
+
+
+        expect(queryResponse).toBeDefined();
+        expect(queryResponse.orderId).toBe(testOrderId);
+        expect(queryResponse.uniqueOrderNo).toBe(createResponse.uniqueOrderNo);
+        expect(queryResponse.code).toBe('OPR00000'); // Query itself succeeded
+
+        // Status might be PROCESSING or PAY_SUCCESS/SUCCESS depending on timing and if payment was completed externally
+        // It's unlikely to be SUCCESS immediately unless the test environment auto-pays.
+        // Check for non-failure statuses.
+        expect(['PROCESSING', 'PAY_SUCCESS', 'SUCCESS']).toContain(queryResponse.status);
+
+        // Optional: Check amount if available and consistent in the query response
+        // expect(queryResponse.payAmount).toBe(testAmount.toString()); // Adjust field name and type as needed
+
+    }, 15000); // Increase timeout for real API calls
   });
 });

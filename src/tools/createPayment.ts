@@ -1,7 +1,7 @@
-import { config as appConfig } from '../config';
+import { config as appConfig } from '../config.js';
 import { YopClient, YopConfig } from '@yeepay/yop-typescript-sdk';
 
-interface PaymentRequest {
+export interface PaymentRequest { // Add export
   orderId: string;
   amount: number;
   goodsName: string;
@@ -83,15 +83,16 @@ export async function createMobileYeepayPayment(input: PaymentRequest): Promise<
     if (input.userId !== undefined) {
       requestBody.userId = input.userId;
     }
-    console.info("[CreatePayment] Request Body:", JSON.stringify(requestBody, null, 2));
+    console.error("[CreatePayment] Request Body:", JSON.stringify(requestBody, null, 2));
 
     const apiUrl = '/rest/v1.0/aggpay/pre-pay';
 
     // Assert requestBody to Record<string, unknown> to satisfy the SDK's post method signature
     // Use double assertion as suggested by the compiler for safer type casting
     const responseData = await yopClient.post(apiUrl, requestBody as unknown as Record<string, unknown>) as YeepayResponse;
-    console.info("[CreatePayment] Raw Response Data:", JSON.stringify(responseData, null, 2)); // 打印原始响应
+    console.error("[CreatePayment] Raw Response Data:", JSON.stringify(responseData, null, 2)); // 打印原始响应
 
+    // We already checked responseData exists, so only check result existence here if needed by logic
     if (responseData && responseData.state === 'SUCCESS') {
       if (responseData.result && responseData.result.code === '00000') {
         // Success state and business code 00000
@@ -119,7 +120,6 @@ export async function createMobileYeepayPayment(input: PaymentRequest): Promise<
       console.error(errorLog);
       throw new Error(`Unknown Yeepay API response state: ${responseData?.state}`);
     }
-
   } catch (error: unknown) {
     // Catch standardized errors from YopClient or business errors thrown within this function
     console.error("[CreatePayment] Overall Error:", error);

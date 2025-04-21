@@ -1,8 +1,8 @@
-import { config as appConfig } from '../config';
+import { config as appConfig } from '../config.js';
 import { YopClient, YopConfig } from '@yeepay/yop-typescript-sdk';
 
 // Expected structure for a successful query result
-interface YeepayQueryResult {
+export interface YeepayQueryResult { // Add export
   code: string;
   message: string;
   orderId: string;
@@ -24,7 +24,7 @@ interface YeepayQueryResponse {
 }
 
 
-interface QueryRequest {
+export interface QueryRequest { // Add export
   orderId: string;
 }
 
