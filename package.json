@@ -1,19 +1,19 @@
 {
   "name": "@yeepay/yeepay-mcp",
-  "version": "0.2.2",
+  "version": "0.2.18",
   "description": "易宝支付(Yeepay) MCP Server 集成",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
-    "build": "tsc && chmod +x dist/index.js",
+    "build": "tsup",
+    "build:watch": "tsup --watch",
     "clean": "rimraf dist coverage",
     "prebuild": "npm run clean",
     "start": "node --loader ts-node/esm src/index.ts",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'node --loader ts-node/esm' src/index.ts",
     "dev:debug": "nodemon --watch 'src/**/*.ts' --exec 'node --inspect --loader ts-node/esm' src/index.ts",
-    "test": "jest --config jest.config.js",
-    "test:watch": "jest --watch --config jest.config.js",
-    "test:coverage": "jest --coverage --config jest.config.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch --config jest.config.js",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --config jest.config.js",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "prepare": "husky install",
@@ -21,7 +21,7 @@
     "postinstall": "husky install"
   },
   "bin": {
-    "yeepay-mcp": "dist/index.js"
+    "@yeepay/yeepay-mcp": "dist/index.js"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -56,12 +56,10 @@
     "@semantic-release/github": "^11.0.1",
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.3",
-    "@types/axios": "^0.9.36",
     "@types/crypto-js": "^4.2.2",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.14",
-    "@types/jsdom": "^21.1.7",
     "@types/node": "^20.17.30",
     "@types/turndown": "^5.0.5",
     "@types/uuid": "^9.0.8",
@@ -80,20 +78,25 @@
     "shx": "^0.3.4",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
+    "tsup": "^8.4.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.10.1",
-    "@yeepay/yop-typescript-sdk": "^4.0.0",
-    "axios": "^1.6.0",
-    "crypto-js": "^4.1.1",
+    "@modelcontextprotocol/sdk": "^1.10.2",
+    "@yeepay/yop-typescript-sdk": "^4.0.12",
+    "cac": "^6.7.14",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.0.0",
-    "form-data": "^4.0.0",
-    "formstream": "^1.1.1",
-    "jsdom": "^25.0.1",
+    "require-esm": "^1.0.0",
     "turndown": "^7.2.0",
     "urlsafe-base64": "^1.0.0",
     "zod": "^3.24.2"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
   },
   "repository": {
     "type": "git",

@@ -1,3 +1,3 @@
 import { jest } from '@jest/globals';
 
-export const createMobileYeepayPayment = jest.fn();
+export const createWebpageYeepayPayment = jest.fn();

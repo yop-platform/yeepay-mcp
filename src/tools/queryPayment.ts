@@ -30,11 +30,11 @@ export interface QueryRequest { // Add export
 
 export async function queryYeepayPaymentStatus(input: QueryRequest): Promise<YeepayQueryResult> {
   try {
-    const { parentMerchantNo, merchantNo, appKey, secretKey } = appConfig;
+    const { parentMerchantNo, merchantNo, appKey, appPrivateKey } = appConfig;
 
     const yopConfig: YopConfig = {
         appKey,
-        secretKey,
+        appPrivateKey,
     };
 
     const yopClient = new YopClient(yopConfig);

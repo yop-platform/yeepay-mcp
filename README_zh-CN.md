@@ -9,7 +9,7 @@
 
 ## 功能
 
-- `create_mobile_yeepay_payment`: 创建易宝移动支付订单
+- `create_webpage_yeepay_payment`: 创建易宝移动支付订单
   - 必填参数: `orderId` (字符串), `amount` (数字), `goodsName` (字符串), `userIp` (字符串)
 - `query_yeepay_payment_status`: 查询易宝支付订单状态
   - 必填参数: `orderId` (字符串)
@@ -228,6 +228,12 @@ node /path/to/yeepay-mcp/dist/index.js
 pnpm run dev
 # 或
 npm run dev
+```
+
+使用 inspector 调试：
+
+```bash
+npx -y @modelcontextprotocol/inspector node dist/index.js
 ```
 
 ### 提交消息规范

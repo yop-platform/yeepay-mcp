@@ -1,27 +1,37 @@
 export default {
-  // preset: 'ts-jest/presets/default-esm', // Remove preset
   testEnvironment: 'node',
-  // extensionsToTreatAsEsm: ['.ts'], // Remove this - run tests in CJS mode
-  moduleNameMapper: { // 保留 moduleNameMapper 以防万一
+  moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^@yeepay/yop-typescript-sdk$': '<rootDir>/tests/__mocks__/@yeepay/yop-typescript-sdk.ts', // Added mapping
   },
-  modulePathIgnorePatterns: ['<rootDir>/dist/'], // Ignore compiled output
+  modulePathIgnorePatterns: ['<rootDir>/dist/'],
   transform: {
-    // Configure ts-jest for CJS output, letting Babel handle the CJS conversion
     '^.+\\.tsx?$': [
       'ts-jest',
       {
-        useESM: false, // Ensure ts-jest doesn't output ESM
-        tsconfig: 'tsconfig.json', // Explicitly point to tsconfig
-        babelConfig: true, // Keep Babel config enabled for CJS conversion
+        useESM: true,
+        tsconfig: 'tsconfig.json',
+        babelConfig: true,
       },
     ],
-    // Remove babel-jest transform for JS files
-    // '^.+\\.jsx?$': 'babel-jest',
+    '^.+\\.jsx?$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    // 忽略 node_modules，但 @yeepay/yop-typescript-sdk 除外 (已修正)
     '/node_modules/(?!@yeepay/yop-typescript-sdk)',
     '\\.pnp\\.[^\\/]+$',
+  ],
+  // Add these settings to improve Jest's handling of mocks
+  resetMocks: false,
+  restoreMocks: false,
+  clearMocks: true,
+  // Set up mock paths
+  moduleDirectories: ['node_modules', 'tests/__mocks__'],
+  // Set up test environment
+  testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+  // Set up coverage
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx,ts,tsx}',
+    '!src/**/*.d.ts',
+    '!src/**/__tests__/**',
   ],
 };

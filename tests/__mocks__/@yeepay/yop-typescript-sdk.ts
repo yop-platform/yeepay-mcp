@@ -1,41 +1,11 @@
 // Mock implementation for @yeepay/yop-typescript-sdk
+import { jest } from '@jest/globals';
 
-// Mock YopConfig type (can be empty or match used properties)
-export interface YopConfig {
-  appKey?: string;
-  secretKey?: string;
-  yopPublicKey?: string;
-}
+// Create a simple mock function for YopClient
+// @ts-ignore - Ignoring TypeScript errors for test mocks
+export const YopClient = jest.fn(() => ({
+  post: jest.fn()
+}));
 
-// Mock YopClient class
-export class YopClient {
-  constructor(config: YopConfig) {
-    console.log('Mock YopClient initialized with config:', config);
-  }
-
-  // Mock the 'post' method used in createPayment.ts
-  async post(apiUrl: string, requestBody: Record<string, any>): Promise<any> {
-    console.log(`Mock YopClient.post called for API: ${apiUrl}`);
-    console.log('Mock YopClient.post request body:', requestBody);
-
-    // Return a mock success response structure
-    if (apiUrl.includes('pre-pay')) {
-       return Promise.resolve({
-         state: 'SUCCESS',
-         result: {
-           code: '00000',
-           message: 'Mock Success',
-           prePayTn: 'mock_prepay_tn_' + Date.now(),
-           orderId: requestBody.orderId || 'mock_order_id',
-           uniqueOrderNo: 'mock_unique_order_' + Date.now(),
-         },
-       });
-    }
-    return Promise.resolve({ state: 'SUCCESS', result: { code: '00000', message: 'Mock Generic Success'} });
-  }
-
-  // Add mock implementations for other methods if needed by tests
-}
-
-
+// Log when the mock is loaded
 console.log('Loaded MOCK @yeepay/yop-typescript-sdk');

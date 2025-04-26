@@ -9,7 +9,7 @@ The Yeepay MCP service provides integration with Yeepay services via the Model C
 
 ## Features
 
-- `create_mobile_yeepay_payment`: Create Yeepay mobile payment order
+- `create_webpage_yeepay_payment`: Create Yeepay webpage payment order
   - Required parameters: `orderId` (string), `amount` (number), `goodsName` (string), `userIp` (string)
 - `query_yeepay_payment_status`: Query Yeepay payment order status
   - Required parameters: `orderId` (string)
@@ -41,7 +41,7 @@ Copy `.env.example` to `.env` and configure the following environment variables:
 ```dotenv
 YOP_PARENT_MERCHANT_NO=Your parent merchant number
 YOP_MERCHANT_NO=Your merchant number
-YOP_SECRET_KEY=Your private key
+YOP_APP_PRIVATE_KEY=Your private key
 YOP_APP_KEY=Your application AppKey
 YOP_NOTIFY_URL=https://your-domain.com/yeepay/notify
 ```
@@ -167,7 +167,7 @@ Configure this service in Cline's MCP settings file (`cline_mcp_settings.json`).
   "env": { // Alternatively, place the configuration in the .env file and ensure the service can read it
     "YOP_PARENT_MERCHANT_NO": "Your parent merchant number",
     "YOP_MERCHANT_NO": "Your merchant number",
-    "YOP_SECRET_KEY": "Your private key",
+    "YOP_APP_PRIVATE_KEY": "Your private key",
     "YOP_APP_KEY": "Your application AppKey",
     "YOP_NOTIFY_URL": "https://your-domain.com/yeepay/notify"
   },
@@ -187,7 +187,7 @@ Configure this service in Cline's MCP settings file (`cline_mcp_settings.json`).
   "env": { // Same as above, env or .env file
     "YOP_PARENT_MERCHANT_NO": "Your parent merchant number",
     "YOP_MERCHANT_NO": "Your merchant number",
-    "YOP_SECRET_KEY": "Your private key",
+    "YOP_APP_PRIVATE_KEY": "Your private key",
     "YOP_APP_KEY": "Your application AppKey",
     "YOP_NOTIFY_URL": "https://your-domain.com/yeepay/notify"
   },
@@ -209,7 +209,7 @@ Configure this service in Cline's MCP settings file (`cline_mcp_settings.json`).
   "env": { // Same as above, env or .env file
     "YOP_PARENT_MERCHANT_NO": "Your parent merchant number",
     "YOP_MERCHANT_NO": "Your merchant number",
-    "YOP_SECRET_KEY": "Your private key",
+    "YOP_APP_PRIVATE_KEY": "Your private key",
     "YOP_APP_KEY": "Your application AppKey",
     "YOP_NOTIFY_URL": "https://your-domain.com/yeepay/notify"
   },

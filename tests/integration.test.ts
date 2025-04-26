@@ -1,7 +1,7 @@
 // tests/integration.test.ts
-import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import type { CreatePaymentSuccessResponse, PaymentRequest as CreatePaymentInput } from '../src/tools/createPayment'; // Import PaymentRequest as CreatePaymentInput
-import type { QueryRequest as QueryPaymentInput, YeepayQueryResult as QueryPaymentResult } from '../src/tools/queryPayment'; // Import QueryRequest as QueryPaymentInput and YeepayQueryResult as QueryPaymentResult
+import { jest, describe, it, expect, beforeEach, beforeAll } from '@jest/globals';
+import type { CreatePaymentSuccessResponse, PaymentRequest as CreatePaymentInput } from '../src/tools/createPayment.js'; // Import PaymentRequest as CreatePaymentInput
+import type { QueryRequest as QueryPaymentInput, YeepayQueryResult as QueryPaymentResult } from '../src/tools/queryPayment.js'; // Import QueryRequest as QueryPaymentInput and YeepayQueryResult as QueryPaymentResult
 
 // --- Configuration for Mock/Real API ---
 const useRealAPI = process.env.USE_REAL_API === 'true';
@@ -10,15 +10,15 @@ console.log(`Running integration tests with ${useRealAPI ? 'REAL API' : 'MOCKED 
 // --- Conditional Mocking ---
 if (!useRealAPI) {
   // Mock the implementation files only if not using the real API
-  jest.mock('../src/tools/createPayment');
-  jest.mock('../src/tools/queryPayment');
+  jest.mock('../src/tools/createPayment.js');
+  jest.mock('../src/tools/queryPayment.js');
 
   // Mock the config module only if not using the real API
-  jest.mock('../src/config', () => ({
+  jest.mock('../src/config.js', () => ({
     config: {
       parentMerchantNo: 'mockParentMerchantNo123',
       merchantNo: 'mockMerchantNo456',
-      secretKey: 'mockSecretKey789',
+      appPrivateKey: 'mockSecretKey789',
       appKey: 'mockAppKey101',
       notifyUrl: 'http://mock.test/notify',
       yopPublicKey: '-----BEGIN PUBLIC KEY-----\nMOCK_YOP_PUBLIC_KEY_CONTENT\n-----END PUBLIC KEY-----'
@@ -33,7 +33,7 @@ if (!useRealAPI) {
     console.warn("dotenv not found or failed to load. Ensure environment variables are set for real API tests.");
   }
   // Validate required env vars for real API calls
-  const requiredEnvVars = ['YEEPAY_PARENT_MERCHANT_NO', 'YEEPAY_MERCHANT_NO', 'YEEPAY_APP_KEY', 'YEEPAY_SECRET_KEY']; // Corrected prefix
+  const requiredEnvVars = ['YOP_PARENT_MERCHANT_NO', 'YOP_MERCHANT_NO', 'YOP_APP_KEY', 'YOP_APP_PRIVATE_KEY']; // Corrected prefix
   const missingVars = requiredEnvVars.filter(v => !process.env[v]);
   if (missingVars.length > 0) {
     throw new Error(`Missing required environment variables for real API tests: ${missingVars.join(', ')}`);
@@ -42,8 +42,8 @@ if (!useRealAPI) {
 
 // --- Type Definitions ---
 // Use the actual function types
-type CreateMobileYeepayPaymentType = typeof import('../src/tools/createPayment').createMobileYeepayPayment;
-type QueryYeepayPaymentStatusType = typeof import('../src/tools/queryPayment').queryYeepayPaymentStatus;
+type CreateWebpageYeepayPaymentType = typeof import('../src/tools/createPayment.js').createWebpageYeepayPayment;
+type QueryYeepayPaymentStatusType = typeof import('../src/tools/queryPayment.js').queryYeepayPaymentStatus;
 
 // Define a union type for the functions, which can be either the real function or the mock
 type PaymentFunction<T extends (...args: any) => any> = T | jest.MockedFunction<T>;
@@ -73,17 +73,17 @@ describe('Yeepay Payment Integration Flow (Mocked)', () => {
     return;
   }
   // Variables to hold either the real functions or the mocks
-  let createPayment: PaymentFunction<CreateMobileYeepayPaymentType>;
+  let createPayment: PaymentFunction<CreateWebpageYeepayPaymentType>;
   let queryPayment: PaymentFunction<QueryYeepayPaymentStatusType>;
 
   beforeEach(async () => {
     if (!useRealAPI) {
       // Dynamically import the MOCKED modules
-      const createPaymentMockModule = await import('../src/tools/createPayment');
-      const queryPaymentMockModule = await import('../src/tools/queryPayment');
+      const createPaymentMockModule = await import('../src/tools/createPayment.js');
+      const queryPaymentMockModule = await import('../src/tools/queryPayment.js');
 
       // Assign the imported mock functions
-      createPayment = createPaymentMockModule.createMobileYeepayPayment as jest.MockedFunction<CreateMobileYeepayPaymentType>;
+      createPayment = createPaymentMockModule.createWebpageYeepayPayment as jest.MockedFunction<CreateWebpageYeepayPaymentType>;
       queryPayment = queryPaymentMockModule.queryYeepayPaymentStatus as jest.MockedFunction<QueryYeepayPaymentStatusType>;
 
       // Reset mocks before each test
@@ -92,14 +92,14 @@ describe('Yeepay Payment Integration Flow (Mocked)', () => {
     } else {
        // Dynamically import the REAL modules
        // We need to bypass the cache potentially set by jest.mock if it ran in a previous non-skipped describe block
-       jest.unmock('../src/tools/createPayment');
-       jest.unmock('../src/tools/queryPayment');
-       jest.unmock('../src/config'); // Ensure config is unmocked too
-       const createPaymentRealModule = await import('../src/tools/createPayment');
-       const queryPaymentRealModule = await import('../src/tools/queryPayment');
-       await import('../src/config'); // Import config to ensure it's loaded
+       jest.unmock('../src/tools/createPayment.js');
+       jest.unmock('../src/tools/queryPayment.js');
+       jest.unmock('../src/config.js'); // Ensure config is unmocked too
+       const createPaymentRealModule = await import('../src/tools/createPayment.js');
+       const queryPaymentRealModule = await import('../src/tools/queryPayment.js');
+       await import('../src/config.js'); // Import config to ensure it's loaded
 
-       createPayment = createPaymentRealModule.createMobileYeepayPayment;
+       createPayment = createPaymentRealModule.createWebpageYeepayPayment;
        queryPayment = queryPaymentRealModule.queryYeepayPaymentStatus;
     }
   });
@@ -264,7 +264,7 @@ describe('Yeepay Payment Integration Flow (Mocked)', () => {
       // Keep environment variable validation for real API runs.
       if (useRealAPI) {
          // Validate required env vars again just in case
-        const requiredEnvVars = ['YEEPAY_PARENT_MERCHANT_NO', 'YEEPAY_MERCHANT_NO', 'YEEPAY_APP_KEY', 'YEEPAY_SECRET_KEY']; // Corrected prefix
+        const requiredEnvVars = ['YOP_PARENT_MERCHANT_NO', 'YOP_MERCHANT_NO', 'YOP_APP_KEY', 'YOP_APP_PRIVATE_KEY']; // Corrected prefix
         const missingVars = requiredEnvVars.filter(v => !process.env[v]);
         if (missingVars.length > 0) {
           throw new Error(`Missing required environment variables for real API tests: ${missingVars.join(', ')}`);
@@ -273,21 +273,21 @@ describe('Yeepay Payment Integration Flow (Mocked)', () => {
     });
 
      // Variables to hold the real functions
-    let createPaymentReal: CreateMobileYeepayPaymentType;
+    let createPaymentReal: CreateWebpageYeepayPaymentType;
     let queryPaymentReal: QueryYeepayPaymentStatusType;
 
     beforeEach(async () => {
         if (!useRealAPI) return; // Don't setup if not running real tests
 
         // Dynamically import the REAL modules, ensuring they are not mocked
-        jest.unmock('../src/tools/createPayment');
-        jest.unmock('../src/tools/queryPayment');
-        jest.unmock('../src/config');
-        const createPaymentRealModule = await import('../src/tools/createPayment');
-        const queryPaymentRealModule = await import('../src/tools/queryPayment');
-        await import('../src/config'); // Ensure real config is loaded
+        jest.unmock('../src/tools/createPayment.js');
+        jest.unmock('../src/tools/queryPayment.js');
+        jest.unmock('../src/config.js');
+        const createPaymentRealModule = await import('../src/tools/createPayment.js');
+        const queryPaymentRealModule = await import('../src/tools/queryPayment.js');
+        await import('../src/config.js'); // Ensure real config is loaded
 
-        createPaymentReal = createPaymentRealModule.createMobileYeepayPayment;
+        createPaymentReal = createPaymentRealModule.createWebpageYeepayPayment;
         queryPaymentReal = queryPaymentRealModule.queryYeepayPaymentStatus;
     });
 
