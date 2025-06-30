@@ -176,26 +176,6 @@ Configure this service in Cline's MCP settings file (`cline_mcp_settings.json`).
 }
 ```
 
-**Configure using npx (Before Publishing - Use Absolute Path):**
-
-```json
-"yeepay-mcp": {
-  "command": "npx",
-  "args": [
-    "/absolute/path/to/yeepay-mcp" // Replace with the actual absolute path
-  ],
-  "env": { // Same as above, env or .env file
-    "YOP_PARENT_MERCHANT_NO": "Your parent merchant number",
-    "YOP_MERCHANT_NO": "Your merchant number",
-    "YOP_APP_PRIVATE_KEY": "Your private key",
-    "YOP_APP_KEY": "Your application AppKey",
-    "YOP_NOTIFY_URL": "https://your-domain.com/yeepay/notify"
-  },
-  "disabled": false,
-  "alwaysAllow": []
-}
-```
-
 **Configure using npx (After Publishing):**
 
 ```json

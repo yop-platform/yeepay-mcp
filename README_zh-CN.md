@@ -176,26 +176,6 @@ node /path/to/yeepay-mcp/dist/index.js
 }
 ```
 
-**使用 npx 配置 (发布前 - 使用绝对路径):**
-
-```json
-"yeepay-mcp": {
-  "command": "npx",
-  "args": [
-    "/absolute/path/to/yeepay-mcp" // 替换为实际的绝对路径
-  ],
-  "env": { // 同上，env 或 .env 文件
-    "YOP_PARENT_MERCHANT_NO": "您的父商户编号",
-    "YOP_MERCHANT_NO": "您的商户编号",
-    "YOP_APP_PRIVATE_KEY": "您的私钥",
-    "YOP_APP_KEY": "您的应用AppKey",
-    "YOP_NOTIFY_URL": "https://您的域名/yeepay/notify"
-  },
-  "disabled": false,
-  "alwaysAllow": []
-}
-```
-
 **使用 npx 配置 (发布后):**
 
 ```json
