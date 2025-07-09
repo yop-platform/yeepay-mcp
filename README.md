@@ -2,8 +2,8 @@
 
 The Yeepay MCP service provides integration with Yeepay services via the Model Context Protocol (MCP).
 
-[![npm version](https://img.shields.io/npm/v/yeepay-mcp.svg)](https://www.npmjs.com/package/yeepay-mcp)
-[![npm downloads](https://img.shields.io/npm/dm/yeepay-mcp.svg)](https://www.npmjs.com/package/yeepay-mcp)
+[![npm version](https://img.shields.io/npm/v/@yeepay/yeepay-mcp.svg)](https://www.npmjs.com/package/@yeepay/yeepay-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/@yeepay/yeepay-mcp.svg)](https://www.npmjs.com/package/@yeepay/yeepay-mcp)
 
 [阅读中文文档](README_zh-CN.md)
 
