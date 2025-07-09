@@ -2,8 +2,8 @@
 
 易宝支付 MCP 服务通过 Model Context Protocol (MCP) 提供与易宝支付服务的集成。
 
-[![npm version](https://img.shields.io/npm/v/yeepay-mcp.svg)](https://www.npmjs.com/package/yeepay-mcp)
-[![npm downloads](https://img.shields.io/npm/dm/yeepay-mcp.svg)](https://www.npmjs.com/package/yeepay-mcp)
+[![npm version](https://img.shields.io/npm/v/@yeepay/yeepay-mcp.svg)](https://www.npmjs.com/package/@yeepay/yeepay-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/@yeepay/yeepay-mcp.svg)](https://www.npmjs.com/package/@yeepay/yeepay-mcp)
 
 [Read this document in English](README.md)
 
