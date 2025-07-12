@@ -249,6 +249,15 @@ BREAKING CHANGE: The configuration format for database connection has changed.
 
 项目中已配置 `commitlint` 和 `husky`，会在提交前自动检查提交消息是否符合规范。你可以使用 `.github/commit-template.txt` 作为提交消息的模板。
 
+### Git Hooks
+
+本项目使用 Husky 来管理 Git hooks：
+
+- **pre-commit**: 运行 `lint-staged` 自动格式化和检查暂存的文件
+- **commit-msg**: 使用 `commitlint` 验证提交消息，确保遵循 Conventional Commits 规范
+
+当你运行 `npm install` 时，hooks 会自动安装，无需全局安装 Husky。
+
 ### 代码风格
 
 本项目使用 ESLint 和 Prettier 来强制执行和保持代码风格的一致性。在提交代码前，会自动运行 `lint-staged` 来检查和格式化暂存区的文件。请确保你的编辑器已配置相应的插件以获得实时反馈。

@@ -17,8 +17,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "prepare": "husky install",
-    "precommit": "lint-staged",
-    "postinstall": "husky install"
+    "precommit": "lint-staged"
   },
   "bin": {
     "@yeepay/yeepay-mcp": "dist/index.js"

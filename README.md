@@ -243,6 +243,15 @@ BREAKING CHANGE: The configuration format for database connection has changed.
 
 The project has configured `commitlint` and `husky` to automatically check if commit messages conform to the specification before committing. You can use `.github/commit-template.txt` as a template for commit messages.
 
+### Git Hooks
+
+This project uses Husky to manage Git hooks:
+
+- **pre-commit**: Runs `lint-staged` to automatically format and lint staged files
+- **commit-msg**: Validates commit messages using `commitlint` to ensure they follow the Conventional Commits specification
+
+The hooks are automatically installed when you run `npm install` and do not require any global installation of Husky.
+
 ### Code Style
 
 This project uses ESLint and Prettier to enforce and maintain code style consistency. Before committing code, `lint-staged` will automatically run to check and format staged files. Please ensure your editor is configured with the corresponding plugins for real-time feedback.
