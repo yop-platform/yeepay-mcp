@@ -9,7 +9,7 @@ import { Input, Output } from "@/typings/random_order_id/random_order_id";
   * 
   * Remember to fill in input/output in Metadata, it helps LLM to recognize and use tool.
   */
-export async function handler({ input, logger }: Args<Input>): Promise<Output> {
+export async function handler({ input, logger: _logger }: Args<Input>): Promise<Output> {
   const { length } = input;
   const randomLength = Math.floor(Math.random() * length);
   const orderId = new Date().toISOString().replace(/\D/g, '') + randomLength;

@@ -1,8 +1,5 @@
 #!/usr/bin/env node
-import {
-  McpServer,
-  ResourceTemplate,
-} from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import dotenv from "dotenv";
 import { z } from "zod";
@@ -14,7 +11,7 @@ dotenv.config();
 
 const server = new McpServer({
   name: "yeepay-mcp",
-  version: "0.2.18",
+  version: "0.3.3",
   description: "易宝支付(Yeepay) MCP 服务集成",
 });
 
@@ -54,11 +51,11 @@ server.tool(
     } catch (error) {
       console.error(
         "Error caught in create_webpage_yeepay_payment tool handler:",
-        error
+        error,
       );
       throw error; // Let SDK handle the error
     }
-  }
+  },
 );
 
 // Define Zod schema for query payment status input
@@ -89,11 +86,11 @@ server.tool(
     } catch (error) {
       console.error(
         "Error caught in query_yeepay_payment_status tool handler:",
-        error
+        error,
       );
       throw error; // Let SDK handle the error
     }
-  }
+  },
 );
 
 async function startServer() {

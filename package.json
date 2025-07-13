@@ -1,6 +1,6 @@
 {
   "name": "@yeepay/yeepay-mcp",
-  "version": "0.2.18",
+  "version": "0.3.3",
   "description": "易宝支付(Yeepay) MCP Server 集成",
   "main": "dist/index.js",
   "scripts": {
@@ -14,8 +14,8 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch --config jest.config.js",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --config jest.config.js",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepare": "husky install",
     "precommit": "lint-staged"
   },
@@ -65,8 +65,9 @@
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
     "babel-jest": "^29.7.0",
-    "eslint": "^8.55.0",
+    "eslint": "^8.57.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "globals": "^16.3.0",
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "lint-staged": "^15.2.0",
@@ -78,7 +79,8 @@
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "tsup": "^8.4.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.36.0"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.2",
