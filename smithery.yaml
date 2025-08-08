@@ -1,0 +1,39 @@
+# Smithery configuration file: https://smithery.ai/docs/build/project-config
+
+startCommand:
+  type: stdio
+  commandFunction:
+    # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
+    |-
+    (config) => ({ command: 'node', args: ['dist/index.js'], env: { YOP_PARENT_MERCHANT_NO: config.YOP_PARENT_MERCHANT_NO, YOP_MERCHANT_NO: config.YOP_MERCHANT_NO, YOP_APP_PRIVATE_KEY: config.YOP_APP_PRIVATE_KEY, YOP_APP_KEY: config.YOP_APP_KEY, YOP_NOTIFY_URL: config.YOP_NOTIFY_URL } })
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - YOP_PARENT_MERCHANT_NO
+      - YOP_MERCHANT_NO
+      - YOP_APP_PRIVATE_KEY
+      - YOP_APP_KEY
+      - YOP_NOTIFY_URL
+    properties:
+      YOP_PARENT_MERCHANT_NO:
+        type: string
+        description: Parent merchant number
+      YOP_MERCHANT_NO:
+        type: string
+        description: Merchant number
+      YOP_APP_PRIVATE_KEY:
+        type: string
+        description: Application private key
+      YOP_APP_KEY:
+        type: string
+        description: Application AppKey
+      YOP_NOTIFY_URL:
+        type: string
+        description: Notification URL
+  exampleConfig:
+    YOP_PARENT_MERCHANT_NO: "1234567890"
+    YOP_MERCHANT_NO: "0987654321"
+    YOP_APP_PRIVATE_KEY: -----BEGIN PRIVATE KEY-----\nMIIEvg...\n-----END PRIVATE KEY-----
+    YOP_APP_KEY: app-key-123
+    YOP_NOTIFY_URL: https://example.com/notify

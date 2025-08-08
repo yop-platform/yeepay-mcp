@@ -4,6 +4,7 @@ The Yeepay MCP service provides integration with Yeepay services via the Model C
 
 [![npm version](https://img.shields.io/npm/v/@yeepay/yeepay-mcp.svg)](https://www.npmjs.com/package/@yeepay/yeepay-mcp)
 [![npm downloads](https://img.shields.io/npm/dm/@yeepay/yeepay-mcp.svg)](https://www.npmjs.com/package/@yeepay/yeepay-mcp)
+[![smithery badge](https://smithery.ai/badge/@yop-platform/yeepay-mcp)](https://smithery.ai/server/@yop-platform/yeepay-mcp)
 
 [阅读中文文档](README_zh-CN.md)
 
@@ -20,6 +21,14 @@ The Yeepay MCP service provides integration with Yeepay services via the Model C
 - pnpm (or npm)
 
 ## Installation and Configuration
+
+### Installing via Smithery
+
+To install Yeepay Payment Integration Service for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@yop-platform/yeepay-mcp):
+
+```bash
+npx -y @smithery/cli install @yop-platform/yeepay-mcp --client claude
+```
 
 ### 1. Installation
 
