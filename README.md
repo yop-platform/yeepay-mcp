@@ -2,6 +2,10 @@
 
 The Yeepay MCP service provides integration with Yeepay services via the Model Context Protocol (MCP).
 
+<a href="https://glama.ai/mcp/servers/@yop-platform/yeepay-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@yop-platform/yeepay-mcp/badge" alt="yeepay-mcp MCP server" />
+</a>
+
 [![npm version](https://img.shields.io/npm/v/@yeepay/yeepay-mcp.svg)](https://www.npmjs.com/package/@yeepay/yeepay-mcp)
 [![npm downloads](https://img.shields.io/npm/dm/@yeepay/yeepay-mcp.svg)](https://www.npmjs.com/package/@yeepay/yeepay-mcp)
 
